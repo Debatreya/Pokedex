@@ -1,0 +1,9 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* color-scheme: dark; */
+    scroll-behavior: smooth;
+    transition: 500ms;
+    animation: ease-in;
+}
