@@ -10,7 +10,10 @@ a{
 }
 
 #pokedex-heading{
-    text-align: center;
     margin: 0 auto;
     letter-spacing: 5px;
+}
+.outer-pokedex{
+    display: flex;
+    flex-direction: column;
 }
