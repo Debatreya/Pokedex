@@ -5,19 +5,37 @@ import Pokemon from "../Pokemon/Pokemon";
 
 export default function PokemonList() {
     
-    const [PokemonList, setPokemonList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [pokedexUrl, setPokedexUrl] = useState('https://pokeapi.co/api/v2/pokemon');
-    const [nextUrl, setNextUrl] = useState(null);
-    const [prevUrl, setPrevUrl] = useState(null);
+    // const [PokemonList, setPokemonList] = useState([]);
+    // const [isLoading, setIsLoading] = useState(true);
+    // const [pokedexUrl, setPokedexUrl] = useState('https://pokeapi.co/api/v2/pokemon');
+    // const [nextUrl, setNextUrl] = useState(null);
+    // const [prevUrl, setPrevUrl] = useState(null);
+
+    // Advance UseSate. We can replace all the above useStates using only 1 useState
+    const [pokemonListState, setPokemonListState] = useState({
+        PokemonList: [],
+        isLoading: true,
+        pokedexUrl: 'https://pokeapi.co/api/v2/pokemon',
+        nextUrl: null,
+        prevUrl: null
+    });
 
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoading(true);
+            // setIsLoading(true);
+            setPokemonListState((state) => ({ 
+                ...state, 
+                isLoading: true
+            }));
             try {
-                const response = await axios.get(pokedexUrl);
-                setNextUrl(response.data.next);
-                setPrevUrl(response.data.previous); // Use response.data.previous
+                const response = await axios.get(pokemonListState.pokedexUrl);
+                // setNextUrl(response.data.next);
+                setPokemonListState((state) => ({ 
+                    ...state, 
+                    nextUrl: response.data.next, 
+                    prevUrl: response.data.previous
+                }))
+                // setPrevUrl(response.data.previous); // Use response.data.previous
 
                 const pokemonResults = [...response.data.results];
                 const pokemonResultPromises = pokemonResults.map((pokemon) => axios.get(pokemon.url));
@@ -30,27 +48,32 @@ export default function PokemonList() {
                     types: pokeData.data.types,
                 }));
 
-                setPokemonList(res);
-                setIsLoading(false);
+                // setPokemonList(res);
+                setPokemonListState((state) => ({...state,
+                    PokemonList: res,
+                    isLoading: false
+                }))
+                // setIsLoading(false);
+                // setPokemonListState({ ...pokemonListState, isLoading: false});
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
 
         fetchData();
-    }, [pokedexUrl]);
+    }, [pokemonListState.pokedexUrl]);
 
     return (
         <div className="pokemon-list-wrapper">
             <h3>Pokemon List</h3>
             <div className="pokemon-wrapper">
-                {isLoading ? 'Loading.....' : 
-                    PokemonList.map((p) => <Pokemon name={p.name} image={p.image} key={p.id} id={p.id} />)
+                {pokemonListState.isLoading ? 'Loading.....' : 
+                    pokemonListState.PokemonList.map((p) => <Pokemon name={p.name} image={p.image} key={p.id} id={p.id} />)
                 }
             </div>
             <div className="controls">
-                <button className="prev" disabled={prevUrl == null} onClick={() => setPokedexUrl(prevUrl)}>Prev</button>
-                <button className="next" disabled={nextUrl == null} onClick={() => setPokedexUrl(nextUrl)}>Next</button>
+                <button className="prev" disabled={pokemonListState.prevUrl == null} onClick={() => setPokemonListState((state) => ({...state, pokedexUrl: state.prevUrl}))}>Prev</button>
+                <button className="next" disabled={pokemonListState.nextUrl == null} onClick={() => setPokemonListState((state) => ({...state, pokedexUrl: state.nextUrl}))}>Next</button>
             </div>
         </div>
     );
