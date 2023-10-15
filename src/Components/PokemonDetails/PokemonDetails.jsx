@@ -4,8 +4,11 @@ import axios from "axios";
 import "./PokemonDetails.css"
 import usePokemonDetails from "../../hooks/usePokemonDetails";
 
-export default function PokemonDetails(){
-    const [pokemonListState, pokemon] = usePokemonDetails();
+export default function PokemonDetails({pokemonName}){
+    // let pokemonName
+    const {id} = useParams();
+    console.log(id);
+    const [pokemonListState, pokemon] = usePokemonDetails(id, pokemonName);
     return(
         <div className="pokemon-details-wrapper">
             <img className="pokemon-details-image" src={pokemon.image} />

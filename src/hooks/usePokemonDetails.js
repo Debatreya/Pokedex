@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import usePokemonList from "./usePokemonList";
 import { useParams } from "react-router-dom";
 
-export default function usePokemonDetails(){
-    const {id} = useParams();
-    console.log(id);
+export default function usePokemonDetails(id, pokemonName){
     const [pokemon, setPokemon] = useState({});
     const [pokemonListState, setPokemonListState] = usePokemonList(`https://pokeapi.co/api/v2/type/fire`, true)
     async function downloadPokemon(){
-        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
+        let response;
+        if(pokemonName)
+            response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+        else
+            response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
         console.log(response);
         setPokemon({
             name: response.data.name,
