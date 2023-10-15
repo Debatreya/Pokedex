@@ -10,7 +10,7 @@ export default function Search({updateSearchTerm}){
                 id="pokemon-name-search"
                 type="text"
                 placeholder="pokemon name..."
-                onChange={(e) => debouncedCallback(e, '123')}
+                onChange={debouncedCallback}
             />
         </div>
     )
